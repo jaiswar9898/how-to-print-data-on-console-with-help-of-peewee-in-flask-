@@ -1,0 +1,112 @@
+# app.py 
+
+from flask import Flask, render_template, request, redirect, url_for, flash
+from prettytable import PrettyTable
+import datetime
+import peewee
+
+from data import* 
+
+
+
+
+app = Flask(__name__)
+app.secret_key = "Secret Key"
+
+# how to create session in flask 
+# session is also like cookies which store in client computer 
+from flask import Flask, render_template, redirect, request, session
+# The Session instance is not used for direct access, you should always use flask.session
+from flask_session import Session
+
+app = Flask(__name__)
+
+
+
+
+@app.route("/login", methods=["POST", "GET"])
+def login():
+	if request.method == "POST":
+		data=request.form.to_dict()
+		a =  request.form.get("fname")
+		b =  request.form.get("lname")
+		c =  request.form.get("tname")
+		d =  request.form.get("Sl")
+		e =  request.form.get("Pname")
+		dict_you = {key: data[key] for key in data.keys() if data[key] != ""}
+		Login.create(**dict_you)
+
+	
+	return render_template("index.html")
+
+
+
+if __name__ == "__main__":
+	app.run(debug=True)
+
+______________________________________________________________________________________________________________________________
+_________________________________________________________________________________________________________________________
+# data.py
+
+# how to print all  data with help peewee 
+
+
+from prettytable import PrettyTable
+import datetime
+import peewee
+from app import login 
+import time
+
+db = peewee.SqliteDatabase("create.db")
+
+class Login(peewee.Model):
+     lname = peewee.CharField(max_length=200)
+     fname = peewee.CharField(max_length=200)
+     tname = peewee.CharField(max_length=200)
+     Sl = peewee.CharField(max_length=200)
+     Pname = peewee.CharField(max_length=200)
+
+     class Meta:
+        database = db
+
+db.create_tables([Login])
+
+mytable = PrettyTable(['Name','Second','Third','Salary','PF'])
+notes = Login.select()
+for note in notes:
+    mytable.add_row([f'{note.lname}',f'{note.fname}',f'{note.tname}',f'{note.Sl}',f'{note.Pname}'])
+print(mytable)
+
+_____________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+#index.html
+
+<html>
+    <head>
+       <title> Try It Yourself </title>
+    </head>
+    <body>
+       <p> Try to submit the form without inputting a text to see how it works. </p>
+                           
+       <form action="{{url_for('login')}}" method="POST">
+          <p id="mySelect">
+          <label>First Name: <input type="text" name="fname" required ></label><br>
+          <label>Second Name: <input type="text" name="lname" requires ></label><br>
+          <label>Third Name: <input type="text" name="tname" requires ></label><br>
+          <label>Salary Name: <input type="text" name="Sl" requires ></label><br>
+          <label>PF Name: <input type="text" name="Pname" requires ></label><br>
+          <input type="submit">
+          </p>
+           <br>
+          <button  onclick="myFunction()">Delete</button>
+          <script>
+            function myFunction() {
+                var x = document.getElementById("mySelect");
+            x.remove(x.selectedIndex);
+            }
+           </script>
+            
+       </form>
+       
+    </body>
+    </html>
